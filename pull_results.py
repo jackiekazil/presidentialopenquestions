@@ -29,7 +29,7 @@ def grab_data(url):
 
     questions = tree.xpath('//div[2]/p[1]/strong/a/text()')
     q_paths = tree.xpath('//div[2]/p[1]/strong/a/@href')
-    count = tree.xpath('//div[1]/div[1]/span/text()')
+    vote_count = tree.xpath('//div[1]/div[1]/span/text()')
     submitters = tree.xpath('//div[3]/strong/text()')
 
     idea_infos = [x.strip('\n').strip() for x in tree.xpath('//div[3]/text()')]
@@ -40,7 +40,7 @@ def grab_data(url):
     issue_areas = tree.xpath('//div[3]/a/strong/text()')
     issue_paths = tree.xpath('//div[3]/a/@href')
 
-    zip_data = zip(questions, q_paths, count, submitters, idea_dates,
+    zip_data = zip(questions, q_paths, vote_count, submitters, idea_dates,
                    issue_areas, issue_paths)
 
     records = []
@@ -57,7 +57,7 @@ def grab_data(url):
         record = {
             'question': a,
             'question_path': b,
-            'vote_count': c,
+            'vote_count': int(c),
             'submitters': submitter,
             'submitter_location': location,
             'submission_date': e,
@@ -87,7 +87,7 @@ if __name__ == '__main__':
         print('Success!')
         time.sleep(1)
 
-        if page_count > 350:
+        if page_count > 500:
             vote_count = page_records[0]['vote_count']
             print(vote_count)
             if int(vote_count) < 5:
