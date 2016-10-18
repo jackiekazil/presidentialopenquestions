@@ -71,31 +71,32 @@ def grab_data(url):
 
 
 if __name__ == '__main__':
+    base = 'https://presidentialopenquestions.com/?sort=%2Bvotes&page='
     vote_count = 0
     page_count = 0
     records = []
+    first_pass_flag = False
 
     while True:
 
         page_count += 1
-
-        base = 'https://presidentialopenquestions.com/?sort=%2Bvotes&page='
         page = '%s' % str(page_count)
         url = base + page
         print(url)
+
         page_records = grab_data(url)
+        records += page_records
         print('Success!')
+
         time.sleep(1)
 
-        if page_count > 500:
-            vote_count = page_records[0]['vote_count']
-            print(vote_count)
-            if int(vote_count) < 5:
-                break
-            else:
-                records += page_records
+        # Once cycled through once back to fewest vote, finish
+        if page_records[0]['vote_count'] == 2:
+            first_pass_flag = True if first_pass_flag == False else True
+        if first_pass_flag and page_records[0]['vote_count'] == 1:
+            break
 
     print(len(records))
 
-    with open('output/data.json', 'w') as outfile:
+    with open('data/data_out.json', 'w') as outfile:
         json.dump(records, outfile)
